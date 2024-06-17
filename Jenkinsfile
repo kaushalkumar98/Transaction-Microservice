@@ -17,7 +17,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout code from GitHub
-                git branch: 'master', url: 'https://github.com/kaushalkumar98/Reporting-service.git'
+                git branch: 'master', url: 'https://github.com/kaushalkumar98/Transaction-Microservice.git'
             }
         }
 
@@ -32,7 +32,7 @@ pipeline {
             steps {
                 // Run SonarQube analysis
                 withSonarQubeEnv('server sonar') {
-                    bat 'mvn sonar:sonar -Dsonar.projectKey=Krasv_bank -Dsonar.projectName=Krasv_bank -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_77a1596f0f95373bae2a4689928d661436d0326b'
+                    bat 'mvn sonar:sonar -Dsonar.projectKey=Transaction-Microservice -Dsonar.projectName=Transaction-Microservice -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_1c4f5f779420fd6956b2a2422491805f39172115'
                 }
             }
         }
