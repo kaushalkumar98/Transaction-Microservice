@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BankServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">spring_boot_backend_security_jwt_template</a> &gt; <a href="index.source.html" class="el_package">com.app.team2.technotribe.krasvbank.service.impl</a> &gt; <span class="el_source">BankServiceImpl.java</span></div><h1>BankServiceImpl.java</h1><pre class="source lang-java linenums">package com.app.team2.technotribe.krasvbank.service.impl;
+
+import java.math.BigDecimal;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.app.team2.technotribe.krasvbank.ExternalService.EmailClient;
+import com.app.team2.technotribe.krasvbank.dto.AccountInfo;
+import com.app.team2.technotribe.krasvbank.dto.BankResponse;
+import com.app.team2.technotribe.krasvbank.dto.CreditDebitRequest;
+import com.app.team2.technotribe.krasvbank.dto.EmailDetailsDto;
+import com.app.team2.technotribe.krasvbank.dto.EnquiryRequest;
+import com.app.team2.technotribe.krasvbank.dto.TransactionDto;
+import com.app.team2.technotribe.krasvbank.dto.TransferRequest;
+import com.app.team2.technotribe.krasvbank.entity.Transaction;
+import com.app.team2.technotribe.krasvbank.entity.BankAccount;
+import com.app.team2.technotribe.krasvbank.repository.BankRepository;
+import com.app.team2.technotribe.krasvbank.util.AccountUtils;
+
+import lombok.AllArgsConstructor;
+
+@Service
+@AllArgsConstructor
+public class BankServiceImpl implements BankService {
+
+	@Autowired
+	BankRepository bankRepository;
+
+//	@Autowired
+//	EmailService emailService;
+	
+	@Autowired
+    private EmailClient emailService;
+
+	@Autowired
+	TransactionService transactionService;
+
+	@Override
+	public BigDecimal balanceEnquiry(EnquiryRequest request) {
+		// check if the provided account number exist in db
+<span class="fc" id="L44">		System.out.println(request.getAccountNumber());</span>
+<span class="fc" id="L45">		BankAccount foundUser = bankRepository.findByAccountNumber(request.getAccountNumber());</span>
+
+<span class="fc" id="L47">		return foundUser.getAccountBalance();</span>
+
+	}
+
+	@Override
+	public String nameEnquiry(EnquiryRequest request) {
+		// check if the provided account number exist in db
+<span class="fc" id="L54">		boolean isAccountExist = bankRepository.existsByAccountNumber(request.getAccountNumber());</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		if (!isAccountExist) {</span>
+<span class="fc" id="L56">			return AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE;</span>
+		}
+<span class="fc" id="L58">		BankAccount foundUser = bankRepository.findByAccountNumber(request.getAccountNumber());</span>
+<span class="fc" id="L59">		System.out.println(&quot;inside userservice&quot; + foundUser.toString());</span>
+<span class="fc" id="L60">		return foundUser.getName();</span>
+	}
+
+	@Transactional
+	@Override
+	public BankResponse creditAccount(CreditDebitRequest request) {
+
+<span class="fc" id="L67">		boolean isAccountExist = bankRepository.existsByAccountNumber(request.getAccountNumber());</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">		if (!isAccountExist) {</span>
+<span class="fc" id="L69">			return BankResponse.builder().responseCode(AccountUtils.ACCOUNT_NOT_EXIST_CODE)</span>
+<span class="fc" id="L70">					.responseMessage(AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE).accountInfo(null).build();</span>
+		}
+
+<span class="fc" id="L73">		BankAccount userToCredit = bankRepository.findByAccountNumber(request.getAccountNumber());</span>
+<span class="fc" id="L74">		userToCredit.setAccountBalance(userToCredit.getAccountBalance().add(request.getAmount()));</span>
+<span class="fc" id="L75">		bankRepository.save(userToCredit);</span>
+
+		// Save transaction
+<span class="fc" id="L78">		TransactionDto transactionDto = TransactionDto.builder().accountNumber(userToCredit.getAccountNumber())</span>
+<span class="fc" id="L79">				.transactionType(&quot;CREDIT&quot;).amount(request.getAmount()).status(&quot;SUCCESS&quot;).build();</span>
+
+<span class="fc" id="L81">		transactionService.saveTransaction(transactionDto);</span>
+
+		// send Email
+<span class="fc" id="L84">		EmailDetailsDto creditAlert = EmailDetailsDto.builder()</span>
+<span class="fc" id="L85">				.subject(&quot;Credit Alert&quot;)</span>
+<span class="fc" id="L86">				.recipient(userToCredit.getEmail())</span>
+<span class="fc" id="L87">				.messageBody(request.getAmount() + &quot; has been Credited to your account !&quot;)</span>
+<span class="fc" id="L88">				.build();</span>
+<span class="fc" id="L89">		emailService.sendEmailAlert(creditAlert);</span>
+
+<span class="fc" id="L91">		return BankResponse.builder().responseCode(AccountUtils.ACCOUNT_CREDITED_SUCCESS_CODE)</span>
+<span class="fc" id="L92">				.responseMessage(AccountUtils.ACCOUNT_CREDITED_SUCCESS_MESSAGE)</span>
+<span class="fc" id="L93">				.accountInfo(AccountInfo.builder().accountName(userToCredit.getName())</span>
+<span class="fc" id="L94">						.accountBalance(userToCredit.getAccountBalance()).accountNumber(request.getAccountNumber())</span>
+<span class="fc" id="L95">						.build())</span>
+<span class="fc" id="L96">				.build();</span>
+	}
+
+	@Override
+	public BankResponse debitAccount(CreditDebitRequest request) {
+
+		// cheak Account if exists
+<span class="fc" id="L103">		boolean isAccountExist = bankRepository.existsByAccountNumber(request.getAccountNumber());</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		if (!isAccountExist) {</span>
+<span class="fc" id="L105">			return BankResponse.builder().responseCode(AccountUtils.ACCOUNT_NOT_EXIST_CODE)</span>
+<span class="fc" id="L106">					.responseMessage(AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE).accountInfo(null).build();</span>
+		}
+
+		// cheak the amount, debit amount is greater than balance
+<span class="fc" id="L110">		BankAccount userToDebit = bankRepository.findByAccountNumber(request.getAccountNumber());</span>
+
+<span class="fc" id="L112">		BigDecimal availableBalance = userToDebit.getAccountBalance();</span>
+<span class="fc" id="L113">		BigDecimal debitAmount = request.getAmount();</span>
+
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		if (availableBalance.compareTo(debitAmount) &lt; 0) {</span>
+<span class="fc" id="L116">			return BankResponse.builder().responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)</span>
+<span class="fc" id="L117">					.responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE).accountInfo(null).build();</span>
+		}
+
+		else {
+<span class="fc" id="L121">			userToDebit.setAccountBalance(userToDebit.getAccountBalance().subtract(request.getAmount()));</span>
+<span class="fc" id="L122">			bankRepository.save(userToDebit);</span>
+
+			// Save transaction
+<span class="fc" id="L125">			TransactionDto transactionDto = TransactionDto.builder().accountNumber(userToDebit.getAccountNumber())</span>
+<span class="fc" id="L126">					.transactionType(&quot;DEBIT&quot;).amount(request.getAmount()).status(&quot;SUCCESS&quot;).build();</span>
+
+<span class="fc" id="L128">			transactionService.saveTransaction(transactionDto);</span>
+
+<span class="fc" id="L130">			EmailDetailsDto creditAlert = EmailDetailsDto.builder().subject(&quot;Debit Alert&quot;).recipient(userToDebit.getEmail())</span>
+<span class="fc" id="L131">					.messageBody(request.getAmount() + &quot; has Debited from your account !&quot;).build();</span>
+<span class="fc" id="L132">			emailService.sendEmailAlert(creditAlert);</span>
+<span class="fc" id="L133">			return BankResponse.builder().responseCode(AccountUtils.ACCOUNT_DEBITED_SUCCESS_CODE)</span>
+<span class="fc" id="L134">					.responseMessage(AccountUtils.ACCOUNT_DEBITED_SUCCESS_MESSAGE)</span>
+<span class="fc" id="L135">					.accountInfo(AccountInfo.builder().accountNumber(request.getAccountNumber())</span>
+<span class="fc" id="L136">							.accountName(userToDebit.getName()).accountBalance(userToDebit.getAccountBalance()).build())</span>
+<span class="fc" id="L137">					.build();</span>
+		}
+	}
+
+	@Transactional
+	@Override
+	public BankResponse transfer(TransferRequest request) {
+		// get the account to debit
+		// cheak Account if exists
+<span class="fc" id="L146">		boolean isDestinationAccountExist = bankRepository.existsByAccountNumber(request.getDestinationAccountNumber());</span>
+
+<span class="fc bfc" id="L148" title="All 2 branches covered.">		if (!isDestinationAccountExist) {</span>
+<span class="fc" id="L149">			return BankResponse.builder().responseCode(AccountUtils.ACCOUNT_NOT_EXIST_CODE)</span>
+<span class="fc" id="L150">					.responseMessage(AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE).accountInfo(null).build();</span>
+		}
+		// cheak if the amount i'm debiting is not more than the current balance
+		// debit the account
+<span class="fc" id="L154">		BankAccount sourceAccountUser = bankRepository.findByAccountNumber(request.getSourceAccountNumber());</span>
+
+<span class="fc bfc" id="L156" title="All 2 branches covered.">		if (request.getAmount().compareTo(sourceAccountUser.getAccountBalance()) &gt; 0) {</span>
+<span class="fc" id="L157">			return BankResponse.builder().responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)</span>
+<span class="fc" id="L158">					.responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE).accountInfo(null).build();</span>
+		}
+<span class="fc" id="L160">		sourceAccountUser.setAccountBalance(sourceAccountUser.getAccountBalance().subtract(request.getAmount()));</span>
+<span class="fc" id="L161">		String sourceUsername = sourceAccountUser.getName();</span>
+<span class="fc" id="L162">		bankRepository.save(sourceAccountUser);</span>
+
+<span class="fc" id="L164">		EmailDetailsDto debitAlert = EmailDetailsDto.builder().subject(&quot;Debit Alert&quot;).recipient(sourceAccountUser.getEmail())</span>
+<span class="fc" id="L165">				.messageBody(request.getAmount() + &quot; has been deducted from your account ! Your current balance is &quot;</span>
+<span class="fc" id="L166">						+ sourceAccountUser.getAccountBalance())</span>
+<span class="fc" id="L167">				.build();</span>
+
+<span class="fc" id="L169">		emailService.sendEmailAlert(debitAlert);</span>
+
+<span class="fc" id="L171">		BankAccount destinationAccountUser = bankRepository.findByAccountNumber(request.getDestinationAccountNumber());</span>
+<span class="fc" id="L172">		destinationAccountUser.setAccountBalance(destinationAccountUser.getAccountBalance().add(request.getAmount()));</span>
+<span class="fc" id="L173">		bankRepository.save(destinationAccountUser);</span>
+
+<span class="fc" id="L175">		EmailDetailsDto creditAlert = EmailDetailsDto.builder().subject(&quot;Credit Alert&quot;)</span>
+<span class="fc" id="L176">				.recipient(destinationAccountUser.getEmail())</span>
+<span class="fc" id="L177">				.messageBody(request.getAmount() + &quot; has been Credited to your account from!&quot; + sourceUsername</span>
+<span class="fc" id="L178">						+ &quot; Your current balance is &quot; + destinationAccountUser.getAccountBalance())</span>
+<span class="fc" id="L179">				.build();</span>
+<span class="fc" id="L180">		emailService.sendEmailAlert(creditAlert);</span>
+
+		// Save transaction
+<span class="fc" id="L183">		TransactionDto transactionDto = TransactionDto.builder()</span>
+<span class="fc" id="L184">				.accountNumber(destinationAccountUser.getAccountNumber()).transactionType(&quot;TRANSFER&quot;)</span>
+<span class="fc" id="L185">				.amount(request.getAmount()).status(&quot;SUCCESS&quot;).build();</span>
+
+<span class="fc" id="L187">		transactionService.saveTransaction(transactionDto);</span>
+
+<span class="fc" id="L189">		return BankResponse.builder().responseCode(AccountUtils.TRANSFER_SUCCESSFUL_CODE)</span>
+<span class="fc" id="L190">				.responseMessage(AccountUtils.TRANSFER_SUCCESSFUL_MESSAGE).accountInfo(null).build();</span>
+	}
+
+	@Override
+	public String createAccount(BankAccount newAccount) {
+
+<span class="fc" id="L196">		bankRepository.save(newAccount);</span>
+
+		// send Email
+<span class="fc" id="L199">		EmailDetailsDto creditAlert = EmailDetailsDto.builder().subject(&quot;Congratulations !!!! Your Bank Account is Activated&quot;)</span>
+<span class="fc" id="L200">				.recipient(newAccount.getEmail()).messageBody(newAccount.getName() + &quot; your Account number is : &quot;</span>
+<span class="fc" id="L201">						+ newAccount.getAccountNumber() + &quot;  YOU CAN START BANKING&quot;)</span>
+<span class="fc" id="L202">				.build();</span>
+<span class="fc" id="L203">		emailService.sendEmailAlert(creditAlert);</span>
+
+<span class="fc" id="L205">		return &quot;User is Active&quot;;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

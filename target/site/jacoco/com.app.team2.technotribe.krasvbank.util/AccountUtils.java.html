@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AccountUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">spring_boot_backend_security_jwt_template</a> &gt; <a href="index.source.html" class="el_package">com.app.team2.technotribe.krasvbank.util</a> &gt; <span class="el_source">AccountUtils.java</span></div><h1>AccountUtils.java</h1><pre class="source lang-java linenums">package com.app.team2.technotribe.krasvbank.util;
+
+import java.time.Year;
+
+<span class="nc" id="L5">public class AccountUtils {</span>
+//	public static final String ACCOUNT_EXISTS_CODE = &quot;001&quot;;
+//	public static final String ACCOUNT_EXISTS_MESSAGE = &quot;This user has already account created !&quot;;
+//	public static final String ACCOUNT_CREATION_SUCCESS = &quot;002&quot;;
+//	public static final String ACCOUNT_CREATION_MESSAGE = &quot;Account has been successfull created &quot;;
+	public static final String ACCOUNT_NOT_EXIST_CODE = &quot;003&quot;;
+	public static final String ACCOUNT_NOT_EXIST_MESSAGE = &quot;User with the provided Account Number does not exist&quot;;
+	public static final String ACCOUNT_FOUND_CODE = &quot;004&quot;;
+	public static final String ACCOUNT_FOUND_MESSAGE = &quot;User with provided Account Number exist&quot;;
+	public static final String ACCOUNT_CREDITED_SUCCESS_CODE = &quot;005&quot;;
+	public static final String ACCOUNT_CREDITED_SUCCESS_MESSAGE = &quot;User Account Credited Successfully&quot;;
+	public static final String INSUFFICIENT_BALANCE_CODE = &quot;006&quot;;
+	public static final String INSUFFICIENT_BALANCE_MESSAGE = &quot;Insufficient balance&quot;;
+	public static final String ACCOUNT_DEBITED_SUCCESS_CODE = &quot;007&quot;;
+	public static final String ACCOUNT_DEBITED_SUCCESS_MESSAGE = &quot;Amount has been successfully debited&quot;;
+	
+	public static final String TRANSFER_SUCCESSFUL_CODE = &quot;008&quot;;
+	public static final String TRANSFER_SUCCESSFUL_MESSAGE = &quot;Transfer Successful&quot;;
+	public static final String INCORRECT_PASSWORD_CODE =&quot;009&quot;;
+	public static final String INCORRECT_PASSWORD_MESSAGE =&quot;INCORRECT PASSWORD&quot;;
+	
+	
+	
+	public static String generateAccountNumber() {
+<span class="nc" id="L29">		Year currentYear = Year.now();</span>
+<span class="nc" id="L30">		int min = 100000;</span>
+<span class="nc" id="L31">		int max = 999999;</span>
+
+		// generate random number between min and max
+<span class="nc" id="L34">		int randNumber = (int) Math.floor(Math.random() * (max - min + 1) + min);</span>
+
+		// convert the current and randomNunber to string , then concat
+
+<span class="nc" id="L38">		String year = String.valueOf(currentYear);</span>
+<span class="nc" id="L39">		String randomNumber = String.valueOf(randNumber);</span>
+<span class="nc" id="L40">		StringBuilder accountNumber = new StringBuilder();</span>
+
+<span class="nc" id="L42">		return accountNumber.append(year).append(randomNumber).toString();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

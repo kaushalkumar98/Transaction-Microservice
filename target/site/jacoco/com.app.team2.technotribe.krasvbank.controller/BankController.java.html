@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BankController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">spring_boot_backend_security_jwt_template</a> &gt; <a href="index.source.html" class="el_package">com.app.team2.technotribe.krasvbank.controller</a> &gt; <span class="el_source">BankController.java</span></div><h1>BankController.java</h1><pre class="source lang-java linenums">package com.app.team2.technotribe.krasvbank.controller;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.app.team2.technotribe.krasvbank.bankStatementPdfGenerator.BankStatement;
+import com.app.team2.technotribe.krasvbank.dto.BankResponse;
+import com.app.team2.technotribe.krasvbank.dto.CreditDebitRequest;
+import com.app.team2.technotribe.krasvbank.dto.EnquiryRequest;
+import com.app.team2.technotribe.krasvbank.dto.TransferRequest;
+import com.app.team2.technotribe.krasvbank.entity.BankAccount;
+import com.app.team2.technotribe.krasvbank.entity.Transaction;
+import com.app.team2.technotribe.krasvbank.service.impl.BankService;
+import com.app.team2.technotribe.krasvbank.repository.BankRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+@RestController
+@RequestMapping(&quot;/api/user&quot;)
+@Tag(name = &quot;User Account Management APIs&quot;)
+public class BankController {
+
+	@Autowired
+	BankService bankService;
+	@Autowired
+	BankRepository userRepository;
+
+	@Autowired
+	private BankStatement bankStatement;
+
+	@PostMapping(&quot;createaccount&quot;)
+	public String createBankAccount(@RequestBody BankAccount newAccount) {
+
+<span class="fc" id="L47">		return bankService.createAccount(newAccount);</span>
+	}
+
+	@GetMapping(&quot;bankStatement&quot;)
+	public List&lt;Transaction&gt; generateBankStatemant(@RequestParam String accountNumber, @RequestParam String startDate,
+			@RequestParam String endDate) {
+<span class="fc" id="L53">		return bankStatement.generateStatement(accountNumber, startDate, endDate);</span>
+	}
+
+	@Operation(summary = &quot;Balance Enquiry&quot;, description = &quot;Given an account number, cheak how much the user has&quot;)
+	@ApiResponse(responseCode = &quot;201&quot;, description = &quot;Http Status 201 SUCCESS&quot;)
+	@GetMapping(&quot;/balanceEnquiry/{accountNumber}&quot;)
+	public BigDecimal balanceEnquiry(@PathVariable(&quot;accountNumber&quot;) String accountNumber) {
+<span class="fc" id="L60">		System.out.println(&quot;inside transactionservice controller&quot;);</span>
+<span class="fc" id="L61">		EnquiryRequest enquiryRequest = new EnquiryRequest(accountNumber);</span>
+<span class="fc" id="L62">		return bankService.balanceEnquiry(enquiryRequest);</span>
+	}
+
+	@PostMapping(&quot;credit&quot;)
+	public BankResponse creditAccount(@RequestBody CreditDebitRequest request) {
+<span class="fc" id="L67">		return bankService.creditAccount(request);</span>
+	}
+
+	@PostMapping(&quot;debit&quot;)
+	public BankResponse debitAccount(@RequestBody CreditDebitRequest request) {
+<span class="fc" id="L72">		return bankService.debitAccount(request);</span>
+	}
+
+	@PostMapping(&quot;transfer&quot;)
+	public BankResponse transfer(@RequestBody TransferRequest request) {
+<span class="fc" id="L77">		return bankService.transfer(request);</span>
+	}
+
+	@GetMapping(&quot;nameEnquiry&quot;)
+	public String nameEnquiry(@RequestBody EnquiryRequest request) {
+<span class="nc" id="L82">		return bankService.nameEnquiry(request);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

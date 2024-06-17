@@ -1,0 +1,11 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank.controller,BankController,5,40,0,0,1,8,1,6,1,6
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank.config,MailConfig,44,0,0,0,12,0,2,0,2,0
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank,Application,25,0,0,0,8,0,3,0,3,0
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank.util,AccountUtils,40,0,0,0,9,0,2,0,2,0
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank.exception,GlobalExceptionHandler,10,0,0,0,2,0,2,0,2,0
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank.exception,UserInactiveException,4,0,0,0,2,0,1,0,1,0
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank.service.impl,TransactionServiceImpl,0,19,0,0,0,6,0,2,0,2
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank.service.impl,BankServiceImpl,0,389,0,12,0,92,0,12,0,6
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank.bankStatementPdfGenerator,EmailServiceImpl,68,0,0,0,16,0,3,0,3,0
+spring_boot_backend_security_jwt_template,com.app.team2.technotribe.krasvbank.bankStatementPdfGenerator,BankStatement,345,5,4,0,78,1,7,1,5,1

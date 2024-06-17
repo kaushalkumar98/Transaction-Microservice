@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MailConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">spring_boot_backend_security_jwt_template</a> &gt; <a href="index.source.html" class="el_package">com.app.team2.technotribe.krasvbank.config</a> &gt; <span class="el_source">MailConfig.java</span></div><h1>MailConfig.java</h1><pre class="source lang-java linenums">package com.app.team2.technotribe.krasvbank.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import java.util.Properties;
+
+@Configuration
+<span class="nc" id="L11">public class MailConfig {</span>
+
+	@Bean
+	public JavaMailSender javaMailSender() {
+<span class="nc" id="L15">		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();</span>
+<span class="nc" id="L16">		mailSender.setHost(&quot;smtp.gmail.com&quot;);</span>
+<span class="nc" id="L17">		mailSender.setPort(587);</span>
+<span class="nc" id="L18">		mailSender.setUsername(&quot;krasvbank@gmail.com&quot;);</span>
+				
+<span class="nc" id="L20">		mailSender.setPassword(&quot;dkpq tqcp dtqp ogbv&quot;);</span>
+
+<span class="nc" id="L22">		Properties props = mailSender.getJavaMailProperties();</span>
+<span class="nc" id="L23">		props.put(&quot;mail.transport.protocol&quot;, &quot;smtp&quot;);</span>
+<span class="nc" id="L24">		props.put(&quot;mail.smtp.auth&quot;, &quot;true&quot;);</span>
+<span class="nc" id="L25">		props.put(&quot;mail.smtp.starttls.enable&quot;, &quot;true&quot;);</span>
+<span class="nc" id="L26">		props.put(&quot;mail.debug&quot;, &quot;true&quot;);</span>
+
+<span class="nc" id="L28">		return mailSender;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

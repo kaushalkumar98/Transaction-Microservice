@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Application.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">spring_boot_backend_security_jwt_template</a> &gt; <a href="index.source.html" class="el_package">com.app.team2.technotribe.krasvbank</a> &gt; <span class="el_source">Application.java</span></div><h1>Application.java</h1><pre class="source lang-java linenums">package com.app.team2.technotribe.krasvbank;
+
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+//import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.SpringVersion;
+
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+
+import org.modelmapper.Conditions;
+
+@SpringBootApplication(scanBasePackages = &quot;com.app.team2.technotribe.krasvbank&quot;)
+@OpenAPIDefinition(info = @Info(title = &quot;Krasv Bank&quot;, description = &quot;Backend Rest Apis for Krasv Bank&quot;, version = &quot;v1.0&quot;, contact = @Contact(name = &quot;Krasv Bank&quot;, email = &quot;3001chavanrohan@gmail.com&quot;, url = &quot;https://github.com/D4-80594-RohanChavan/Banking-Application&quot;), license = @License(name = &quot;Krasv Bank&quot;, url = &quot;https://github.com/D4-80594-RohanChavan/Banking-Application&quot;)), externalDocs = @ExternalDocumentation(description = &quot;Krasv Bank Documentation&quot;, url = &quot;https://github.com/D4-80594-RohanChavan/Banking-Application &quot;))
+@EnableFeignClients
+//@EnableEurekaClient
+<span class="nc" id="L24">public class Application {</span>
+
+	public static void main(String[] args) {
+<span class="nc" id="L27">		System.out.println(&quot;version:&quot; + SpringVersion.getVersion());</span>
+<span class="nc" id="L28">		SpringApplication.run(Application.class, args);</span>
+		
+<span class="nc" id="L30">	}</span>
+
+	@Bean // equivalent to &lt;bean id ..../&gt; in xml file
+	public ModelMapper mapper() {
+<span class="nc" id="L34">		ModelMapper modelMapper = new ModelMapper();</span>
+<span class="nc" id="L35">		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT)</span>
+<span class="nc" id="L36">				.setPropertyCondition(Conditions.isNotNull());</span>
+<span class="nc" id="L37">		return modelMapper;</span>
+	}
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

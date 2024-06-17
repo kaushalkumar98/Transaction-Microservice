@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmailServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">spring_boot_backend_security_jwt_template</a> &gt; <a href="index.source.html" class="el_package">com.app.team2.technotribe.krasvbank.bankStatementPdfGenerator</a> &gt; <span class="el_source">EmailServiceImpl.java</span></div><h1>EmailServiceImpl.java</h1><pre class="source lang-java linenums">package com.app.team2.technotribe.krasvbank.bankStatementPdfGenerator;
+
+import java.io.File;
+import java.util.Objects;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+
+import com.app.team2.technotribe.krasvbank.dto.EmailDetailsDto;
+
+import lombok.extern.slf4j.Slf4j;
+//import javax.mail.MessagingException;
+//import javax.mail.internet.MimeMessage;
+//import com.app.team2.technotribe.krasvbank.dto.EmailDetails;
+
+@Service
+<span class="nc" id="L25">@Slf4j</span>
+<span class="nc" id="L26">public class EmailServiceImpl implements EmailService {</span>
+
+	@Autowired
+	private JavaMailSender javaMailSender;
+
+	@Value(&quot;${spring.mail.username}&quot;)
+	private String senderEmail;
+
+	@Autowired(required = false)
+//	@Override
+//	public void sendEmailAlert(EmailDetailsDto emailDetails) {
+//		// TODO Auto-generated method stub
+//		try {
+//			SimpleMailMessage mailMessage = new SimpleMailMessage();
+//			mailMessage.setFrom(senderEmail);
+//			mailMessage.setTo(emailDetails.getRecipient());
+//			mailMessage.setText(emailDetails.getMessageBody());
+//			mailMessage.setSubject(emailDetails.getSubject());
+//
+//			javaMailSender.send(mailMessage);
+//			System.out.println(&quot;Mail send successfully&quot;);
+//
+//		} catch (RuntimeException e) {
+//			e.printStackTrace();
+//		}
+//	}
+
+	@Override
+	public void sendEmailWithAttachment(EmailDetailsDto emailDetails) {
+<span class="nc" id="L55">		MimeMessage mimeMessage= javaMailSender.createMimeMessage();</span>
+		MimeMessageHelper mimeMessageHelper;
+		try {
+<span class="nc" id="L58">			mimeMessageHelper =new MimeMessageHelper(mimeMessage,true);</span>
+<span class="nc" id="L59">			mimeMessageHelper.setFrom(senderEmail);</span>
+<span class="nc" id="L60">			mimeMessageHelper.setTo(emailDetails.getRecipient());</span>
+<span class="nc" id="L61">			mimeMessageHelper.setText(emailDetails.getMessageBody());</span>
+<span class="nc" id="L62">			mimeMessageHelper.setSubject(emailDetails.getSubject());</span>
+			
+<span class="nc" id="L64">			FileSystemResource file=new FileSystemResource(new File(emailDetails.getAttachment()));</span>
+<span class="nc" id="L65">			mimeMessageHelper.addAttachment(Objects.requireNonNull(file.getFilename()), file);</span>
+<span class="nc" id="L66">			javaMailSender.send(mimeMessage);</span>
+			
+<span class="nc" id="L68">			log.info(file.getFilename()+&quot;has been sent to user with email &quot;+emailDetails.getRecipient());</span>
+			
+			
+<span class="nc" id="L71">		}catch(MessagingException e) {</span>
+<span class="nc" id="L72">			throw new RuntimeException(e);</span>
+<span class="nc" id="L73">		}</span>
+		
+<span class="nc" id="L75">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
