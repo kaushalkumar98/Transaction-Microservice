@@ -32,7 +32,7 @@ pipeline {
             steps {
                 // Run SonarQube analysis
                 withSonarQubeEnv('server sonar') {
-                    bat 'mvn sonar:sonar -Dsonar.projectKey=Transaction-Microservice -Dsonar.projectName=Transaction-Microservice -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_1c4f5f779420fd6956b2a2422491805f39172115'
+                    bat 'mvn sonar:sonar -Dsonar.projectKey=Transaction-Service -Dsonar.projectName=Transaction-Service -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_0f68a58c84b07c33fa626f17383a513fb8aeff87'
                 }
             }
         }
